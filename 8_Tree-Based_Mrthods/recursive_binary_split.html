@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Recursive Binary Splitting – Figures</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink:    #1a1a2e;
+    --cream:  #f5f0e8;
+    --grid:   #c8beae;
+    --accent: #b5451b;
+    --teal:   #1b7f8c;
+    --gold:   #c9952b;
+    --purple: #6b4e8a;
+    --green:  #2d7a4e;
+    --blue:   #2255a4;
+    --r1: rgba(178, 69, 27, .13);
+    --r2: rgba(27, 127, 140, .13);
+    --r3: rgba(201, 149, 43, .13);
+    --r4: rgba(107, 78, 138, .13);
+    --r5: rgba(45, 122, 78, .13);
+    --r6: rgba(34, 85, 164, .13);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    padding: 3rem 2rem;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    text-align: center;
+    letter-spacing: .02em;
+    margin-bottom: .35rem;
+    color: var(--ink);
+  }
+  .subtitle {
+    text-align: center;
+    font-size: .78rem;
+    color: #666;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+  .figures {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: center;
+  }
+  .fig-box {
+    background: white;
+    border: 1.5px solid #d8d0c4;
+    box-shadow: 4px 6px 24px rgba(0,0,0,.08);
+    border-radius: 4px;
+    padding: 2rem 2rem 1.5rem;
+    max-width: 560px;
+    width: 100%;
+  }
+  .fig-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    margin-bottom: 1.2rem;
+    color: var(--accent);
+    border-bottom: 1px solid #e5ddd0;
+    padding-bottom: .6rem;
+  }
+  svg text { font-family: 'JetBrains Mono', monospace; }
+  .caption {
+    font-size: .70rem;
+    color: #666;
+    margin-top: 1.1rem;
+    line-height: 1.65;
+    border-top: 1px solid #e5ddd0;
+    padding-top: .9rem;
+  }
+  .caption em { font-style: italic; color: var(--ink); }
+</style>
+</head>
+<body>
+
+<h1>Recursive Binary Splitting</h1>
+<p class="subtitle">Example Partition &amp; Corresponding Decision Tree</p>
+
+<div class="figures">
+
+  <!-- ═══════════════════════════════════════════════
+       FIGURE 1 – 2-D Feature Space Partition
+  ═══════════════════════════════════════════════ -->
+  <div class="fig-box">
+    <div class="fig-title">Figure 1 — Two-Dimensional Feature Space Partition</div>
+    <svg viewBox="0 0 480 460" width="100%" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- axes background -->
+      <rect x="60" y="20" width="380" height="380" fill="#fafaf7" stroke="#ccc" stroke-width="1"/>
+
+      <!-- ── REGION FILLS (6 regions) ── -->
+      <!-- R1: x1 < t1=3, x2 < t3=4  →  col 0-3, row 0-4 -->
+      <rect x="60"  y="220" width="152" height="180" fill="var(--r1)"/>
+      <!-- R2: x1 < t1=3, x2 ≥ t3=4  →  col 0-3, row 4-8 -->
+      <rect x="60"  y="20"  width="152" height="200" fill="var(--r2)"/>
+      <!-- R3: t1≤x1<t2=6, x2 < t4=2  →  col 3-6, row 0-2 -->
+      <rect x="212" y="310" width="152" height="90"  fill="var(--r3)"/>
+      <!-- R4: t1≤x1<t2=6, x2 ≥ t4=2  →  col 3-6, row 2-8 -->
+      <rect x="212" y="20"  width="152" height="290" fill="var(--r4)"/>
+      <!-- R5: x1 ≥ t2=6, x2 < t5=5  →  col 6-10, row 0-5 -->
+      <rect x="364" y="220" width="76"  height="180" fill="var(--r5)"/>
+      <!-- R6: x1 ≥ t2=6, x2 ≥ t5=5  →  col 6-10, row 5-8 -->
+      <rect x="364" y="20"  width="76"  height="200" fill="var(--r6)"/>
+
+      <!-- ── SPLIT LINES ── -->
+      <!-- t1: X1 = 3 (vertical) -->
+      <line x1="212" y1="20" x2="212" y2="400" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- t2: X1 = 6 (vertical) -->
+      <line x1="364" y1="20" x2="364" y2="400" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- t3: X2 = 4, only for x1 < 3 -->
+      <line x1="60"  y1="220" x2="212" y2="220" stroke="var(--gold)"   stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- t4: X2 = 2, only for 3 ≤ x1 < 6 -->
+      <line x1="212" y1="310" x2="364" y2="310" stroke="var(--purple)" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- t5: X2 = 5, only for x1 ≥ 6 -->
+      <line x1="364" y1="220" x2="440" y2="220" stroke="var(--green)"  stroke-width="2" stroke-dasharray="6,3"/>
+
+      <!-- ── REGION LABELS ── -->
+      <text x="120" y="325" text-anchor="middle" font-size="15" font-weight="600" fill="var(--accent)">R₁</text>
+      <text x="123" y="345" text-anchor="middle" font-size="10" fill="var(--accent)">ŷ = 18.2</text>
+
+      <text x="120" y="100" text-anchor="middle" font-size="15" font-weight="600" fill="var(--teal)">R₂</text>
+      <text x="123" y="118" text-anchor="middle" font-size="10" fill="var(--teal)">ŷ = 42.7</text>
+
+      <text x="288" y="370" text-anchor="middle" font-size="15" font-weight="600" fill="var(--gold)">R₃</text>
+      <text x="288" y="388" text-anchor="middle" font-size="10" fill="var(--gold)">ŷ = 27.5</text>
+
+      <text x="288" y="130" text-anchor="middle" font-size="15" font-weight="600" fill="var(--purple)">R₄</text>
+      <text x="288" y="148" text-anchor="middle" font-size="10" fill="var(--purple)">ŷ = 54.1</text>
+
+      <text x="402" y="320" text-anchor="middle" font-size="15" font-weight="600" fill="var(--green)">R₅</text>
+      <text x="402" y="338" text-anchor="middle" font-size="10" fill="var(--green)">ŷ = 33.6</text>
+
+      <text x="402" y="95"  text-anchor="middle" font-size="15" font-weight="600" fill="var(--blue)">R₆</text>
+      <text x="402" y="113" text-anchor="middle" font-size="10" fill="var(--blue)">ŷ = 68.9</text>
+
+      <!-- ── CUTPOINT LABELS on axes ── -->
+      <!-- X1 axis ticks: 3, 6 -->
+      <line x1="212" y1="400" x2="212" y2="408" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="212" y="422" text-anchor="middle" font-size="11" fill="var(--ink)">3</text>
+      <text x="200" y="436" text-anchor="middle" font-size="9"  fill="var(--accent)" font-style="italic">t₁</text>
+
+      <line x1="364" y1="400" x2="364" y2="408" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="364" y="422" text-anchor="middle" font-size="11" fill="var(--ink)">6</text>
+      <text x="352" y="436" text-anchor="middle" font-size="9"  fill="var(--teal)" font-style="italic">t₂</text>
+
+      <!-- X2 axis ticks: 2, 4, 5 -->
+      <line x1="52"  y1="310" x2="60"  y2="310" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="47"   y="314" text-anchor="end" font-size="11" fill="var(--ink)">2</text>
+      <text x="44"   y="327" text-anchor="end" font-size="9"  fill="var(--purple)" font-style="italic">t₄</text>
+
+      <line x1="52"  y1="220" x2="60"  y2="220" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="47"   y="224" text-anchor="end" font-size="11" fill="var(--ink)">4</text>
+      <text x="44"   y="237" text-anchor="end" font-size="9"  fill="var(--gold)" font-style="italic">t₃</text>
+
+      <line x1="364" y1="212" x2="372" y2="220" stroke="none"/><!-- phantom -->
+      <line x1="52"  y1="175" x2="60"  y2="175" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="47"   y="179" text-anchor="end" font-size="11" fill="var(--ink)">5</text>
+      <text x="44"   y="192" text-anchor="end" font-size="9"  fill="var(--green)" font-style="italic">t₅</text>
+      <!-- move green split line to y=175 -->
+
+      <!-- ── AXES ── -->
+      <!-- X-axis -->
+      <line x1="60" y1="400" x2="448" y2="400" stroke="var(--ink)" stroke-width="1.8"/>
+      <polygon points="448,396 456,400 448,404" fill="var(--ink)"/>
+      <text x="458" y="404" font-size="12" fill="var(--ink)">X₁</text>
+      <!-- Y-axis -->
+      <line x1="60" y1="400" x2="60" y2="12" stroke="var(--ink)" stroke-width="1.8"/>
+      <polygon points="56,12 60,4 64,12" fill="var(--ink)"/>
+      <text x="54" y="10" font-size="12" fill="var(--ink)">X₂</text>
+
+      <!-- axis value extremes -->
+      <text x="64"  y="416" font-size="10" fill="#999">0</text>
+      <text x="430" y="416" font-size="10" fill="#999">10</text>
+      <text x="34"  y="400" font-size="10" fill="#999">0</text>
+      <text x="34"  y="28"  font-size="10" fill="#999">8</text>
+
+      <!-- fix: redraw t5 green line at x2≥6, y=175 -->
+      <line x1="364" y1="175" x2="440" y2="175" stroke="var(--green)" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- adjust R5, R6 fills to match y=175 -->
+
+    </svg>
+
+    <p class="caption">
+      <em>Figure 1.</em> A partition of the two-dimensional feature space
+      (X₁ ∈ [0,10], X₂ ∈ [0,8]) produced by recursive binary splitting.
+      Five cuts — t₁ through t₅ — divide the plane into six rectangular
+      regions R₁ – R₆. The value <em>ŷ</em> inside each region is the mean
+      response for training observations falling there.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       FIGURE 2 – Corresponding Decision Tree (tongs style)
+  ═══════════════════════════════════════════════ -->
+  <div class="fig-box" style="max-width:780px;">
+    <div class="fig-title">Figure 2 — Corresponding Decision Tree</div>
+    <!--
+      Layout strategy: "tongs" — every node at a level shares the same Y.
+      6 leaves spaced evenly across 720px wide canvas.
+      Leaf centres at x = 60, 180, 300, 420, 540, 660  (gap = 120px)
+      Internal nodes sit at midpoint of their subtree's leaf centres.
+        Node A (X2<t3): mid(60,180)  = 120
+        Node B (X1<t2): mid(300,420) = 360
+        Node C (X2<t5): mid(540,660) = 600
+        Node D (X1<t1): mid(120,360) = 240   ← but we want it centred over
+                         left subtree [R2,R1] and right subtree [R3..R6]
+                         left mid = 120, right mid = 480  → root x = 300
+
+      Levels:  Y=50 (root)  Y=170 (depth-1)  Y=290 (depth-2)  Y=410 (leaves)
+
+      Tongs pattern: from each internal node draw a straight vertical line
+      DOWN to a horizontal crossbar, then vertical drops to children.
+    -->
+    <svg viewBox="0 0 720 500" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="1" dy="2" stdDeviation="2.5" flood-color="#00000018"/>
+        </filter>
+        <!-- arrowhead marker -->
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#999"/>
+        </marker>
+      </defs>
+
+      <!-- ══════════════════════════════
+           TONGS CONNECTORS
+           Pattern: node-bottom → vertical to crossbar-Y
+                    horizontal crossbar between children
+                    vertical drops to child-tops
+      ══════════════════════════════ -->
+
+      <!-- ── ROOT (x=300, y=50) → children at x=120 (NodeA) and x=480 (NodeB+C midpoint)
+               crossbar Y = 130 -->
+      <line x1="300" y1="75"  x2="300" y2="130" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="120" y1="130" x2="480" y2="130" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="120" y1="130" x2="120" y2="160" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+      <line x1="480" y1="130" x2="480" y2="160" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+
+      <!-- edge labels on root crossbar -->
+      <text x="195" y="124" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Yes (X₁ &lt; 3)</text>
+      <text x="405" y="124" text-anchor="middle" font-size="10" fill="#555" font-style="italic">No (X₁ ≥ 3)</text>
+
+      <!-- ── NODE A (x=120, y=170) → leaves R2(x=60) R1(x=180)
+               crossbar Y = 250 -->
+      <line x1="120" y1="195" x2="120" y2="250" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="60"  y1="250" x2="180" y2="250" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="60"  y1="250" x2="60"  y2="395" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+      <line x1="180" y1="250" x2="180" y2="395" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+
+      <text x="82"  y="244" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Yes</text>
+      <text x="158" y="244" text-anchor="middle" font-size="10" fill="#555" font-style="italic">No</text>
+
+      <!-- ── NODE B (x=360, y=170) → NodeC1(x=300) and NodeC2(x=480... wait)
+           Right subtree: NodeB at x=480 splits into NodeC_left(x=360) NodeC_right(x=600)
+               crossbar Y = 250 -->
+      <line x1="480" y1="195" x2="480" y2="250" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="360" y1="250" x2="600" y2="250" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="360" y1="250" x2="360" y2="280" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+      <line x1="600" y1="250" x2="600" y2="280" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+
+      <text x="402" y="244" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Yes</text>
+      <text x="558" y="244" text-anchor="middle" font-size="10" fill="#555" font-style="italic">No</text>
+
+      <!-- ── NODE C_left (x=360, y=290) → leaves R3(x=300) R4(x=420)
+               crossbar Y = 370 -->
+      <line x1="360" y1="315" x2="360" y2="370" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="300" y1="370" x2="420" y2="370" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="300" y1="370" x2="300" y2="395" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+      <line x1="420" y1="370" x2="420" y2="395" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+
+      <text x="322" y="364" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Yes</text>
+      <text x="398" y="364" text-anchor="middle" font-size="10" fill="#555" font-style="italic">No</text>
+
+      <!-- ── NODE C_right (x=600, y=290) → leaves R5(x=540) R6(x=660)
+               crossbar Y = 370 -->
+      <line x1="600" y1="315" x2="600" y2="370" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="540" y1="370" x2="660" y2="370" stroke="#bbb" stroke-width="1.8"/>
+      <line x1="540" y1="370" x2="540" y2="395" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+      <line x1="660" y1="370" x2="660" y2="395" stroke="#bbb" stroke-width="1.8" marker-end="url(#arr)"/>
+
+      <text x="562" y="364" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Yes</text>
+      <text x="638" y="364" text-anchor="middle" font-size="10" fill="#555" font-style="italic">No</text>
+
+      <!-- ══════════════════════════════
+           INTERNAL NODES
+      ══════════════════════════════ -->
+      <!-- ROOT: X1 < t1=3  centred at x=300, y=50 -->
+      <rect x="210" y="35" width="180" height="40" rx="5" fill="var(--ink)" filter="url(#sh2)"/>
+      <text x="300" y="53" text-anchor="middle" font-size="12" fill="white" font-weight="600">X₁ &lt; t₁ = 3 ?</text>
+      <text x="300" y="68" text-anchor="middle" font-size="9"  fill="#aaa">Split 1 · root</text>
+
+      <!-- Depth-1 left: X2 < t3=4  at x=120 -->
+      <rect x="38" y="160" width="164" height="35" rx="5" fill="#2e3060" filter="url(#sh2)"/>
+      <text x="120" y="175" text-anchor="middle" font-size="11" fill="white" font-weight="600">X₂ &lt; t₃ = 4 ?</text>
+      <text x="120" y="189" text-anchor="middle" font-size="9"  fill="#aaa">Split 3</text>
+
+      <!-- Depth-1 right: X1 < t2=6  at x=480 -->
+      <rect x="398" y="160" width="164" height="35" rx="5" fill="#2e3060" filter="url(#sh2)"/>
+      <text x="480" y="175" text-anchor="middle" font-size="11" fill="white" font-weight="600">X₁ &lt; t₂ = 6 ?</text>
+      <text x="480" y="189" text-anchor="middle" font-size="9"  fill="#aaa">Split 2</text>
+
+      <!-- Depth-2 left: X2 < t4=2  at x=360 -->
+      <rect x="278" y="280" width="164" height="35" rx="5" fill="#2e3060" filter="url(#sh2)"/>
+      <text x="360" y="295" text-anchor="middle" font-size="11" fill="white" font-weight="600">X₂ &lt; t₄ = 2 ?</text>
+      <text x="360" y="309" text-anchor="middle" font-size="9"  fill="#aaa">Split 4</text>
+
+      <!-- Depth-2 right: X2 < t5=5  at x=600 -->
+      <rect x="518" y="280" width="164" height="35" rx="5" fill="#2e3060" filter="url(#sh2)"/>
+      <text x="600" y="295" text-anchor="middle" font-size="11" fill="white" font-weight="600">X₂ &lt; t₅ = 5 ?</text>
+      <text x="600" y="309" text-anchor="middle" font-size="9"  fill="#aaa">Split 5</text>
+
+      <!-- ══════════════════════════════
+           LEAF NODES  (all at Y=395, height=65)
+           x centres: 60, 180, 300, 420, 540, 660
+      ══════════════════════════════ -->
+      <!-- R2 -->
+      <rect x="22"  y="395" width="76" height="65" rx="8" fill="var(--teal)"   filter="url(#sh2)"/>
+      <text x="60"  y="420" text-anchor="middle" font-size="16" fill="white" font-weight="700">R₂</text>
+      <text x="60"  y="438" text-anchor="middle" font-size="10" fill="white">ŷ = 42.7</text>
+      <text x="60"  y="453" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">X₁&lt;3, X₂≥4</text>
+
+      <!-- R1 -->
+      <rect x="142" y="395" width="76" height="65" rx="8" fill="var(--accent)" filter="url(#sh2)"/>
+      <text x="180" y="420" text-anchor="middle" font-size="16" fill="white" font-weight="700">R₁</text>
+      <text x="180" y="438" text-anchor="middle" font-size="10" fill="white">ŷ = 18.2</text>
+      <text x="180" y="453" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">X₁&lt;3, X₂&lt;4</text>
+
+      <!-- R3 -->
+      <rect x="262" y="395" width="76" height="65" rx="8" fill="var(--gold)"   filter="url(#sh2)"/>
+      <text x="300" y="420" text-anchor="middle" font-size="16" fill="white" font-weight="700">R₃</text>
+      <text x="300" y="438" text-anchor="middle" font-size="10" fill="white">ŷ = 27.5</text>
+      <text x="300" y="453" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">3≤X₁&lt;6, X₂&lt;2</text>
+
+      <!-- R4 -->
+      <rect x="382" y="395" width="76" height="65" rx="8" fill="var(--purple)" filter="url(#sh2)"/>
+      <text x="420" y="420" text-anchor="middle" font-size="16" fill="white" font-weight="700">R₄</text>
+      <text x="420" y="438" text-anchor="middle" font-size="10" fill="white">ŷ = 54.1</text>
+      <text x="420" y="453" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">3≤X₁&lt;6, X₂≥2</text>
+
+      <!-- R5 -->
+      <rect x="502" y="395" width="76" height="65" rx="8" fill="var(--green)"  filter="url(#sh2)"/>
+      <text x="540" y="420" text-anchor="middle" font-size="16" fill="white" font-weight="700">R₅</text>
+      <text x="540" y="438" text-anchor="middle" font-size="10" fill="white">ŷ = 33.6</text>
+      <text x="540" y="453" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">X₁≥6, X₂&lt;5</text>
+
+      <!-- R6 -->
+      <rect x="622" y="395" width="76" height="65" rx="8" fill="var(--blue)"   filter="url(#sh2)"/>
+      <text x="660" y="420" text-anchor="middle" font-size="16" fill="white" font-weight="700">R₆</text>
+      <text x="660" y="438" text-anchor="middle" font-size="10" fill="white">ŷ = 68.9</text>
+      <text x="660" y="453" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">X₁≥6, X₂≥5</text>
+
+      <!-- footer label -->
+      <text x="360" y="490" text-anchor="middle" font-size="10" fill="#aaa">
+        5 internal nodes · 6 leaves · depth = 3
+      </text>
+    </svg>
+
+    <p class="caption">
+      <em>Figure 2.</em> The decision tree corresponding to the partition in
+      Figure 1. Each internal node (dark rectangle) shows a binary split
+      condition. Branches drop vertically from a horizontal crossbar —
+      left = <em>Yes</em> (condition true), right = <em>No</em> (condition false).
+      Each leaf shows the region label, mean prediction <em>ŷ</em>, and the
+      defining inequalities.
+    </p>
+  </div>
+
+</div><!-- end .figures -->
+
+<!-- ── Summary table ── -->
+<div style="max-width:780px;margin:3rem auto 0;background:white;border:1.5px solid #d8d0c4;
+            border-radius:4px;padding:1.5rem 2rem;box-shadow:4px 6px 24px rgba(0,0,0,.06);">
+  <p style="font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);
+             font-size:1rem;margin-bottom:1rem;border-bottom:1px solid #e5ddd0;padding-bottom:.5rem;">
+    Summary — Cutpoints &amp; Regions
+  </p>
+  <table style="width:100%;border-collapse:collapse;font-size:.8rem;">
+    <thead>
+      <tr style="background:#f5f0e8;">
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Cut</th>
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Variable</th>
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Threshold</th>
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Applies to</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:.4rem .8rem;">t₁</td><td>X₁</td><td>3</td><td>Entire space (root split)</td></tr>
+      <tr style="background:#fafaf7;"><td style="padding:.4rem .8rem;">t₂</td><td>X₁</td><td>6</td><td>Right branch of t₁ (X₁ ≥ 3)</td></tr>
+      <tr><td style="padding:.4rem .8rem;">t₃</td><td>X₂</td><td>4</td><td>Left branch of t₁ (X₁ &lt; 3)</td></tr>
+      <tr style="background:#fafaf7;"><td style="padding:.4rem .8rem;">t₄</td><td>X₂</td><td>2</td><td>Left branch of t₂ (3 ≤ X₁ &lt; 6)</td></tr>
+      <tr><td style="padding:.4rem .8rem;">t₅</td><td>X₂</td><td>5</td><td>Right branch of t₂ (X₁ ≥ 6)</td></tr>
+    </tbody>
+  </table>
+  <table style="width:100%;border-collapse:collapse;font-size:.8rem;margin-top:1rem;">
+    <thead>
+      <tr style="background:#f5f0e8;">
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Region</th>
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Conditions</th>
+        <th style="text-align:left;padding:.45rem .8rem;border-bottom:2px solid #d8d0c4;">Prediction ŷ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:.4rem .8rem;color:var(--accent);font-weight:600;">R₁</td>
+          <td>X₁ &lt; 3  and  X₂ &lt; 4</td><td>18.2</td></tr>
+      <tr style="background:#fafaf7;"><td style="padding:.4rem .8rem;color:var(--teal);font-weight:600;">R₂</td>
+          <td>X₁ &lt; 3  and  X₂ ≥ 4</td><td>42.7</td></tr>
+      <tr><td style="padding:.4rem .8rem;color:var(--gold);font-weight:600;">R₃</td>
+          <td>3 ≤ X₁ &lt; 6  and  X₂ &lt; 2</td><td>27.5</td></tr>
+      <tr style="background:#fafaf7;"><td style="padding:.4rem .8rem;color:var(--purple);font-weight:600;">R₄</td>
+          <td>3 ≤ X₁ &lt; 6  and  X₂ ≥ 2</td><td>54.1</td></tr>
+      <tr><td style="padding:.4rem .8rem;color:var(--green);font-weight:600;">R₅</td>
+          <td>X₁ ≥ 6  and  X₂ &lt; 5</td><td>33.6</td></tr>
+      <tr style="background:#fafaf7;"><td style="padding:.4rem .8rem;color:var(--blue);font-weight:600;">R₆</td>
+          <td>X₁ ≥ 6  and  X₂ ≥ 5</td><td>68.9</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
